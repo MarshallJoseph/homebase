@@ -1,6 +1,0 @@
-{
-  "$schema": "https://schema.railpack.com",
-  "deploy": {
-    "startCommand": "python manage.py migrate --noinput && python manage.py createcachetable && gunicorn homebase.wsgi"
-  }
-}
