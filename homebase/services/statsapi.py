@@ -1,12 +1,16 @@
+import hashlib
 from datetime import date
 
 import plotly.graph_objects as go
 import requests
+from django.core.cache import cache
 
 from homebase.services.assets import headshot_url, team_logo_url
 from homebase.services.stat_calcs import bb_pct, so_pct
 
 BASE_URL = 'https://statsapi.mlb.com'
+DEFAULT_TTL = 600
+LONG_TTL = 24 * 60 * 60
 
 TEAM_ABBR = {
     108: 'LAA', 109: 'ARI', 110: 'BAL', 111: 'BOS', 112: 'CHC', 113: 'CIN',
@@ -43,18 +47,29 @@ TEAMS_NAV_ORDER = [
 ]
 
 
-def _get(path, **params):
+def _cache_key(path, params):
+    canonical = path + '?' + '&'.join(f'{k}={v}' for k, v in sorted(params.items()))
+    return 'statsapi:' + hashlib.md5(canonical.encode()).hexdigest()
+
+
+def _get(path, ttl=DEFAULT_TTL, **params):
+    key = _cache_key(path, params)
+    cached = cache.get(key)
+    if cached is not None:
+        return cached
     resp = requests.get(f'{BASE_URL}{path}', params=params, timeout=10)
     resp.raise_for_status()
-    return resp.json()
+    data = resp.json()
+    cache.set(key, data, ttl)
+    return data
 
 
 def get_teams():
-    return _get('/api/v1/teams', sportId=1)
+    return _get('/api/v1/teams', ttl=LONG_TTL, sportId=1)
 
 
 def get_team(team_id):
-    return _get(f'/api/v1/teams/{team_id}')
+    return _get(f'/api/v1/teams/{team_id}', ttl=LONG_TTL)
 
 
 def get_roster_with_stats(team_id):
@@ -65,11 +80,11 @@ def get_roster_with_stats(team_id):
 
 
 def get_standings():
-    return _get('/api/v1/standings', leagueId='103,104')
+    return _get('/api/v1/standings', ttl=300, leagueId='103,104')
 
 
 def get_player(player_id):
-    return _get(f'/api/v1/people/{player_id}')
+    return _get(f'/api/v1/people/{player_id}', ttl=LONG_TTL)
 
 
 def get_player_stats(player_id):
@@ -97,7 +112,7 @@ def get_leaders(category, limit=10, team_id=None, stat_group=None):
         params['teamId'] = team_id
     if stat_group is not None:
         params['statGroup'] = stat_group
-    return _get('/api/v1/stats/leaders', **params)
+    return _get('/api/v1/stats/leaders', ttl=300, **params)
 
 
 def _split_pct(split):

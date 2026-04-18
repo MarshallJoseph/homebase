@@ -4,18 +4,27 @@ from time import mktime
 
 import feedparser
 import requests
+from django.core.cache import cache
 
 LEAGUE_FEED_URL = 'https://www.mlb.com/feeds/news/rss.xml'
 TEAM_FEED_URL_TEMPLATE = 'https://www.mlb.com/{slug}/feeds/news/rss.xml'
+TTL_SECONDS = 600
 
 
 def _fetch(url, limit):
+    cache_key = 'rss:' + url
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached[:limit]
+
     resp = requests.get(url, timeout=10)
     resp.raise_for_status()
     xml = resp.content
     feed = feedparser.parse(xml)
     images_by_link = _extract_images_by_link(xml)
-    return [_normalize(entry, images_by_link) for entry in feed.entries[:limit]]
+    items = [_normalize(entry, images_by_link) for entry in feed.entries]
+    cache.set(cache_key, items, TTL_SECONDS)
+    return items[:limit]
 
 
 def _extract_images_by_link(xml_bytes):
