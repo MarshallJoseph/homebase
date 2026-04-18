@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block title %}Standings · HOMEBASE{% endblock %}
+
+{% block content %}
+  <h1 class="mb-3">Standings</h1>
+  {% include "_standings_grid.html" with show_splits=True %}
+{% endblock %}

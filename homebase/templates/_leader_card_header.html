@@ -1,0 +1,19 @@
+<div class="card-header d-flex flex-wrap align-items-center gap-3">
+  <span>{{ chart.label }}</span>
+  {% if chart.top_player %}
+    <div class="d-flex flex-wrap align-items-center gap-3 small ms-auto">
+      <span class="d-flex align-items-center gap-1">
+        <span class="opacity-75">Leader:</span>
+        <span>{{ chart.top_player.name }}</span>
+      </span>
+      <span class="d-flex align-items-center gap-1">
+        <span class="opacity-75">Team:</span>
+        <span>{{ chart.top_player.team_name }}</span>
+      </span>
+      <span>
+        <span class="opacity-75">Score:</span>
+        <strong>{{ chart.top_player.value }}</strong>
+      </span>
+    </div>
+  {% endif %}
+</div>

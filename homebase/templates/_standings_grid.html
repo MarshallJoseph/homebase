@@ -1,0 +1,53 @@
+<div class="row g-3 mb-4">
+  {% for division in divisions %}
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="table-responsive">
+          <table class="table table-standings mb-0 align-middle">
+            <thead>
+              <tr>
+                <th>{{ division.name }}</th>
+                <th class="text-end">W</th>
+                <th class="text-end">L</th>
+                <th class="text-end">Pct</th>
+                <th class="text-end">GB</th>
+                <th class="text-end">L10</th>
+                <th class="text-end">Diff</th>
+                {% if show_splits %}
+                  <th class="text-end">Home</th>
+                  <th class="text-end">Away</th>
+                  <th class="text-end">1Run</th>
+                  <th class="text-end">XInn</th>
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for team in division.teams %}
+                <tr>
+                  <td>
+                    <a href="{% url 'team' team.team_id %}" class="text-decoration-none text-white d-flex align-items-center gap-2">
+                      <img src="{{ team.logo_url }}" alt="" width="20" height="20">
+                      <span>{{ team.abbr }}</span>
+                    </a>
+                  </td>
+                  <td class="text-end">{{ team.wins }}</td>
+                  <td class="text-end">{{ team.losses }}</td>
+                  <td class="text-end">{{ team.pct }}</td>
+                  <td class="text-end">{{ team.gb }}</td>
+                  <td class="text-end">{{ team.l10 }}</td>
+                  <td class="text-end">{{ team.diff }}</td>
+                  {% if show_splits %}
+                    <td class="text-end">{{ team.home_pct }}</td>
+                    <td class="text-end">{{ team.away_pct }}</td>
+                    <td class="text-end">{{ team.one_run_pct }}</td>
+                    <td class="text-end">{{ team.extra_inning_pct }}</td>
+                  {% endif %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>

@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}{% if header %}{{ header.name }}{% else %}Player{% endif %} · HOMEBASE{% endblock %}
+
+{% block content %}
+  {% if header %}
+    <div class="mb-4 d-flex align-items-start gap-3 flex-wrap">
+      <span class="d-inline-flex rounded-circle bg-white p-1">
+        <img src="{{ header.headshot_url }}" alt="" width="80" height="80" class="rounded-circle">
+      </span>
+      <div class="flex-grow-1">
+        <h1 class="mb-0">{{ header.name }}</h1>
+        <div class="text-hb-muted d-flex align-items-center gap-2">
+          <span>{{ header.position }}</span>
+          {% if header.team_logo_url %}<img src="{{ header.team_logo_url }}" width="16" height="16" alt="">{% endif %}
+          <span>{{ header.team_name }}</span>
+        </div>
+      </div>
+      <div class="d-flex gap-4 text-end">
+        {% if is_pitcher %}
+          <div><div class="small text-hb-muted">Throws</div><div class="fw-bold">{{ header.throws }}</div></div>
+        {% else %}
+          <div><div class="small text-hb-muted">B / T</div><div class="fw-bold">{{ header.bats }} / {{ header.throws }}</div></div>
+        {% endif %}
+        <div><div class="small text-hb-muted">Age</div><div class="fw-bold">{{ header.age }}</div></div>
+        <div><div class="small text-hb-muted">H</div><div class="fw-bold">{{ header.height }}</div></div>
+        <div><div class="small text-hb-muted">W</div><div class="fw-bold">{{ header.weight }}</div></div>
+        <div><div class="small text-hb-muted">Drafted</div><div class="fw-bold">{{ header.draft_year }}</div></div>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="card mb-3">
+    <div class="table-responsive">
+      <table class="table table-player-stats mb-0 align-middle">
+        <thead>
+          {% if is_pitcher %}
+            <tr>
+              <th>Year</th>
+              <th class="text-start">Team</th>
+              <th>G</th>
+              <th>GS</th>
+              <th class="section-start">BF</th>
+              <th>IP</th>
+              <th class="section-start">ERA</th>
+              <th>WHIP</th>
+              <th class="section-start">SO</th>
+              <th>BB</th>
+              <th>SO%</th>
+              <th>BB%</th>
+              <th class="section-start">SO/9</th>
+              <th>BB/9</th>
+              <th>SO/BB</th>
+              <th>HR</th>
+              <th>HR/9</th>
+            </tr>
+          {% else %}
+            <tr>
+              <th>Year</th>
+              <th class="text-start">Team</th>
+              <th>G</th>
+              <th>PA</th>
+              <th class="section-start">H</th>
+              <th>R</th>
+              <th>2B</th>
+              <th>3B</th>
+              <th>HR</th>
+              <th class="section-start">AVG</th>
+              <th>OBP</th>
+              <th>SLG</th>
+              <th>OPS</th>
+              <th>BABIP</th>
+              <th class="section-start">SO</th>
+              <th>BB</th>
+              <th>SO%</th>
+              <th>BB%</th>
+              <th class="section-start">SB</th>
+              <th>CS</th>
+            </tr>
+          {% endif %}
+        </thead>
+        <tbody>
+          {% for row in rows %}
+            <tr class="{% if row.kind == 'projected' %}row-projected{% elif row.kind == 'career' %}row-career{% endif %}">
+              <td>{{ row.season }}</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  {% if row.team_logo_url %}<img src="{{ row.team_logo_url }}" width="16" height="16" alt="">{% endif %}
+                  <span>{{ row.team_name }}</span>
+                </div>
+              </td>
+              {% if is_pitcher %}
+                <td>{{ row.g }}</td>
+                <td>{{ row.gs }}</td>
+                <td class="section-start">{{ row.bf }}</td>
+                <td>{{ row.ip }}</td>
+                <td class="section-start">{{ row.era }}</td>
+                <td>{{ row.whip }}</td>
+                <td class="section-start">{{ row.so }}</td>
+                <td>{{ row.bb }}</td>
+                <td>{{ row.so_pct }}</td>
+                <td>{{ row.bb_pct }}</td>
+                <td class="section-start">{{ row.so9 }}</td>
+                <td>{{ row.bb9 }}</td>
+                <td>{{ row.sobb }}</td>
+                <td>{{ row.hr }}</td>
+                <td>{{ row.hr9 }}</td>
+              {% else %}
+                <td>{{ row.g }}</td>
+                <td>{{ row.pa }}</td>
+                <td class="section-start">{{ row.h }}</td>
+                <td>{{ row.r }}</td>
+                <td>{{ row.double }}</td>
+                <td>{{ row.triple }}</td>
+                <td>{{ row.hr }}</td>
+                <td class="section-start">{{ row.avg }}</td>
+                <td>{{ row.obp }}</td>
+                <td>{{ row.slg }}</td>
+                <td>{{ row.ops }}</td>
+                <td>{{ row.babip }}</td>
+                <td class="section-start">{{ row.so }}</td>
+                <td>{{ row.bb }}</td>
+                <td>{{ row.so_pct }}</td>
+                <td>{{ row.bb_pct }}</td>
+                <td class="section-start">{{ row.sb }}</td>
+                <td>{{ row.cs }}</td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2 class="h5 mb-2">Recent Games</h2>
+  <div class="card mb-4">
+    <div class="table-responsive">
+      <table class="table table-recent-games mb-0 align-middle">
+        <thead>
+          {% if is_pitcher %}
+            <tr>
+              <th>Date</th>
+              <th class="text-start">Opp</th>
+              <th class="text-start">Summary</th>
+              <th>IP</th>
+              <th>ER</th>
+              <th>H</th>
+              <th>BB</th>
+              <th>K</th>
+              <th>ERA</th>
+            </tr>
+          {% else %}
+            <tr>
+              <th>Date</th>
+              <th class="text-start">Opp</th>
+              <th class="text-start">Summary</th>
+              <th>H</th>
+              <th>HR</th>
+              <th>RBI</th>
+              <th>K</th>
+              <th>BB</th>
+              <th>AVG</th>
+            </tr>
+          {% endif %}
+        </thead>
+        <tbody>
+          {% for game in recent_games %}
+            <tr>
+              <td>{{ game.date }}</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  {% if game.opponent_logo_url %}<img src="{{ game.opponent_logo_url }}" width="16" height="16" alt="">{% endif %}
+                  <span>{{ game.opponent_abbr }}</span>
+                </div>
+              </td>
+              <td class="text-start">{{ game.summary }}</td>
+              {% if is_pitcher %}
+                <td>{{ game.ip }}</td>
+                <td>{{ game.er }}</td>
+                <td>{{ game.h }}</td>
+                <td>{{ game.bb }}</td>
+                <td>{{ game.k }}</td>
+                <td>{{ game.era }}</td>
+              {% else %}
+                <td>{{ game.h }}</td>
+                <td>{{ game.hr }}</td>
+                <td>{{ game.rbi }}</td>
+                <td>{{ game.k }}</td>
+                <td>{{ game.bb }}</td>
+                <td>{{ game.avg }}</td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

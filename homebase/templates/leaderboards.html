@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Leaderboards · HOMEBASE{% endblock %}
+
+{% block extra_head %}
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+{% endblock %}
+
+{% block content %}
+  <h1 class="mb-3">Leaderboards</h1>
+
+  <h2 class="mb-3">Hitting</h2>
+  <div class="row g-3 mb-4">
+    {% for chart in hitting_charts %}
+      <div class="col-lg-6">
+        <div class="card">
+          {% include "_leader_card_header.html" with chart=chart %}
+          <div class="card-body p-2">
+            {{ chart.chart_html|safe }}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <h2 class="mb-3">Pitching</h2>
+  <div class="row g-3">
+    {% for chart in pitching_charts %}
+      <div class="col-lg-6">
+        <div class="card">
+          {% include "_leader_card_header.html" with chart=chart %}
+          <div class="card-body p-2">
+            {{ chart.chart_html|safe }}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

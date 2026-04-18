@@ -1,0 +1,18 @@
+<div class="row g-3 mb-4">
+  {% for item in news_items %}
+    <div class="col-md-6 col-lg-3">
+      <a href="{{ item.link }}" target="_blank" rel="noopener" class="news-card">
+        {% if item.image %}
+          <img src="{{ item.image }}" class="news-card-image" alt="">
+        {% endif %}
+        <div class="news-card-body">
+          <h6 class="news-card-title">{{ item.title }}</h6>
+          <div class="news-card-meta">
+            {% firstof item.author "MLB.com" %}
+            {% if item.published %} · {{ item.published|date:"n/j/Y · g:i A" }}{% endif %}
+          </div>
+        </div>
+      </a>
+    </div>
+  {% endfor %}
+</div>

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}HOMEBASE{% endblock %}
+
+{% block content %}
+  <h1 class="mb-3">Standings</h1>
+  {% include "_standings_grid.html" %}
+
+  <h2 class="mb-3">MLB News</h2>
+  {% include "_news_row.html" %}
+
+  <h2 class="mb-3">League Leaders</h2>
+  {% include "_leaders_row.html" %}
+{% endblock %}

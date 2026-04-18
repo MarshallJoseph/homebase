@@ -1,0 +1,20 @@
+<div class="row g-3 mb-5 justify-content-center">
+  {% for card in leaders %}
+    <div class="col-md-6 col-lg-3">
+      {% if card.leader %}
+        <a href="{% url 'player' card.leader.player_id %}" class="leader-card">
+          <div class="leader-card-label">{{ card.label }}</div>
+          <div class="leader-card-value">{{ card.leader.value }}</div>
+          <div class="leader-card-name">{{ card.leader.name }}</div>
+          <div class="leader-card-team">{{ card.leader.team_abbr }}</div>
+          <img src="{{ card.leader.headshot_url }}" alt="" class="leader-card-headshot">
+        </a>
+      {% else %}
+        <div class="leader-card">
+          <div class="leader-card-label">{{ card.label }}</div>
+          <div class="leader-card-name">No data</div>
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>

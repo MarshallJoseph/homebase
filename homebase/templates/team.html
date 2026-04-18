@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}{% if header %}{{ header.name }}{% else %}Team{% endif %} · HOMEBASE{% endblock %}
+
+{% block content %}
+  {% if header %}
+    <div class="mb-3 d-flex align-items-center gap-3">
+      <div class="team-logo-frame">
+        <img src="{{ header.logo_url }}" alt="" width="48" height="48">
+      </div>
+      <div>
+        <h1 class="mb-0">{{ header.name }}</h1>
+        <div>
+          {% if header.rank_label %}<span class="text-hb-muted">{{ header.rank_label }} in {{ header.division }}</span>{% endif %}
+          <span class="text-white fw-bold ms-2">{{ header.wins }}-{{ header.losses }} ({{ header.pct }})</span>
+          {% if header.gb and header.gb != '-' %}<span class="badge bg-secondary ms-2">{{ header.gb }} GB</span>{% endif %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="card mb-3">
+    <div class="table-responsive">
+      <table class="table table-roster mb-0 align-middle">
+        <thead>
+          <tr>
+            <th class="text-center">Pos</th>
+            <th class="text-end">#</th>
+            <th class="text-start">Batter</th>
+            <th>Age</th>
+            <th>B</th>
+            <th>T</th>
+            <th>PA</th>
+            <th>H</th>
+            <th>2B</th>
+            <th>3B</th>
+            <th>HR</th>
+            <th>SB</th>
+            <th>SO%</th>
+            <th>BB%</th>
+            <th>AVG</th>
+            <th>OBP</th>
+            <th>OPS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for player in hitters %}
+            <tr>
+              <td class="text-center">{{ player.pos }}</td>
+              <td class="text-end text-hb-muted">{{ player.number }}</td>
+              <td>
+                <a href="{% url 'player' player.player_id %}" class="text-decoration-none text-white d-flex align-items-center gap-2">
+                  <img src="{{ player.headshot_url }}" alt="" width="40" height="40" class="rounded-circle roster-headshot">
+                  <span>{{ player.name }}</span>
+                </a>
+              </td>
+              <td>{{ player.age }}</td>
+              <td>{{ player.bats }}</td>
+              <td>{{ player.throws }}</td>
+              <td>{{ player.pa }}</td>
+              <td>{{ player.h }}</td>
+              <td>{{ player.double }}</td>
+              <td>{{ player.triple }}</td>
+              <td>{{ player.hr }}</td>
+              <td>{{ player.sb }}</td>
+              <td>{{ player.so_pct }}</td>
+              <td>{{ player.bb_pct }}</td>
+              <td>{{ player.avg }}</td>
+              <td>{{ player.obp }}</td>
+              <td>{{ player.ops }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="table-responsive">
+      <table class="table table-roster mb-0 align-middle">
+        <thead>
+          <tr>
+            <th class="text-center">Pos</th>
+            <th class="text-end">#</th>
+            <th class="text-start">Pitcher</th>
+            <th>Age</th>
+            <th>G</th>
+            <th>IP</th>
+            <th>BF</th>
+            <th>ERA</th>
+            <th>SO</th>
+            <th>BB</th>
+            <th>SO%</th>
+            <th>BB%</th>
+            <th>OPS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for player in pitchers %}
+            <tr>
+              <td class="text-center">{{ player.pos }}</td>
+              <td class="text-end text-hb-muted">{{ player.number }}</td>
+              <td>
+                <a href="{% url 'player' player.player_id %}" class="text-decoration-none text-white d-flex align-items-center gap-2">
+                  <img src="{{ player.headshot_url }}" alt="" width="40" height="40" class="rounded-circle roster-headshot">
+                  <span>{{ player.name }}</span>
+                </a>
+              </td>
+              <td>{{ player.age }}</td>
+              <td>{{ player.g }}</td>
+              <td>{{ player.ip }}</td>
+              <td>{{ player.bf }}</td>
+              <td>{{ player.era }}</td>
+              <td>{{ player.so }}</td>
+              <td>{{ player.bb }}</td>
+              <td>{{ player.so_pct }}</td>
+              <td>{{ player.bb_pct }}</td>
+              <td>{{ player.ops }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2 class="mb-3">{% if header %}{{ header.name }}{% endif %} News</h2>
+  {% include "_news_row.html" %}
+
+  <h2 class="mb-3">Team Leaders</h2>
+  {% include "_leaders_row.html" %}
+{% endblock %}
